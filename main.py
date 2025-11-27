@@ -28,7 +28,14 @@ def download_video(url):
     """YouTube 영상을 다운로드하고 버퍼와 파일명을 반환합니다."""
     
     # 먼저 비디오 정보 추출 (다운로드 없이)
-    with YoutubeDL({"quiet": True}) as ydl:
+    with YoutubeDL({
+        "quiet": True,
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["default", "-tv_simply"],
+            },
+        },
+    }) as ydl:
         info = ydl.extract_info(url, download=False)
         video_id = info.get('id', 'video')
         title = info.get('title', 'video')
@@ -47,7 +54,12 @@ def download_video(url):
         ydl_opts = {
             "outtmpl": "-",  # stdout으로 출력
             "format": "best[ext=mp4]/best",  # mp4 형식 우선
-            "logtostderr": True  # 로그는 stderr로
+            "logtostderr": True,  # 로그는 stderr로
+            "extractor_args": {
+                "youtube": {
+                    "player_client": ["default", "-tv_simply"],
+                },
+            },
         }
         
         with YoutubeDL(ydl_opts) as ydl:
